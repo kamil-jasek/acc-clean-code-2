@@ -3,6 +3,7 @@ package pl.sda.cleancode;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Objects;
+import pl.sda.cleancode.dto.RegisterCompanyForm;
 
 final class Company extends Customer {
 
@@ -13,6 +14,16 @@ final class Company extends Customer {
         super(email, verification);
         this.name = requireNonNull(name);
         this.vat = requireNonNull(vat);
+    }
+
+    static Company createFrom(RegisterCompanyForm form) {
+        final var verification = form.isVerified()
+            ? CustomerVerification.verifiedBy(CustomerVerifier.AUTO_EMAIL)
+            : CustomerVerification.notVerified();
+        return new Company(new Email(form.getEmail()),
+            verification,
+            new Name(form.getName()),
+            new Vat(form.getVat()));
     }
 
     public Name getName() {
